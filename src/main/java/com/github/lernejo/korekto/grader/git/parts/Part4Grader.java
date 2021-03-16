@@ -40,7 +40,7 @@ public class Part4Grader extends AbstractPartGrader {
             explanations.add("The branch `" + BRANCH + "` should have at least 3 commits, found " + commits.size());
             return result(explanations, grade);
         }
-        if (!context.part3Commits.subList(0, 2).equals(commits.subList(0, 2))) {
+        if (context.part3Commits == null || !context.part3Commits.subList(0, 2).equals(commits.subList(0, 2))) {
             explanations.add("The first two commits of branch `" + BRANCH + "` should be the same as in branch `" + Part3Grader.BRANCH + "`");
             return result(explanations, grade);
         }
@@ -55,11 +55,11 @@ public class Part4Grader extends AbstractPartGrader {
         }
         List<Title> titles = endMd.getTitlesOfLevel(1);
         List<Title> expectedTitles = List.of(new Title(1, "The end"));
-        if (!expectedTitles.equals(titles)) {
+        if (!equalator.equals(expectedTitles, titles)) {
             explanations.add("In **End.md**, title should be " + expectedTitles + ", found " + titles);
             return result(explanations, grade);
         }
-        if (endMd.getLineCount() != 2) {
+        if (!equalator.equals(endMd.getLineCount(), 2)) {
             explanations.add("**End.md** file should be 2 lines long, found " + endMd.getLineCount());
             return result(explanations, grade);
         }

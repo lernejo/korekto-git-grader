@@ -42,7 +42,7 @@ public class Part2Grader extends AbstractPartGrader {
             explanations.add("The branch `" + BRANCH + "` should have at least 4 commits, found " + commits.size());
             return result(explanations, grade);
         }
-        if (!context.part1Commits.subList(0, 3).equals(commits.subList(0, 3))) {
+        if (context.part1Commits == null || context.part1Commits.size() < 3 || !context.part1Commits.subList(0, 3).equals(commits.subList(0, 3))) {
             explanations.add("The first three commits of branch `" + BRANCH + "` should be the same as branch `" + Part1Grader.BRANCH + "`");
             return result(explanations, grade);
         }

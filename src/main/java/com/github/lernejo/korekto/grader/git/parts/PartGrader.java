@@ -13,6 +13,6 @@ public interface PartGrader {
     GradePart grade(GitContext c, Exercise exercise, GitTrainingGraderContext context);
 
     default GradePart result(List<String> explanations, double grade) {
-        return new GradePart(name(), grade, explanations);
+        return new GradePart(name(), grade, 1L, explanations);
     }
 }

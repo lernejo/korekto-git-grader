@@ -116,7 +116,7 @@ public class Part1Grader extends AbstractPartGrader {
             explanations.add("In **Ex.md**, expecting one bullet point `" + NAME + "`, found " + bulletPoints);
             return result(explanations, 0);
         }
-        if (exMd.getLineCount() != 3) {
+        if (!equalator.equals(exMd.getLineCount(), 3)) {
             explanations.add("**Ex.md** file should be 3 lines long, found " + exMd.getLineCount());
             return result(explanations, 0);
         }
@@ -138,7 +138,7 @@ public class Part1Grader extends AbstractPartGrader {
             return result(explanations, 0);
         }
 
-        if (docMd.getLineCount() != 4) {
+        if (!equalator.equals(docMd.getLineCount(), 4)) {
             explanations.add("**Doc.md** file should be 4 lines long, found " + docMd.getLineCount());
             return result(explanations, 0);
         }

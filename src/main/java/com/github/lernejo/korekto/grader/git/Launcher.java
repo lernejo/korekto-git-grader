@@ -7,7 +7,7 @@ public class Launcher {
     public static void main(String[] args) {
         int exitCode = new GradingJob()
             .addCloneStep()
-            .addStep("grading", (configuration, context) -> new Grader().grade(configuration, context))
+            .addStep("grading", new Grader())
             .addSendStep()
             .run();
         System.exit(exitCode);
