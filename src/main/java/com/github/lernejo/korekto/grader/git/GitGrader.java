@@ -5,12 +5,12 @@ import com.github.lernejo.korekto.toolkit.*;
 import com.github.lernejo.korekto.toolkit.misc.Equalator;
 import com.github.lernejo.korekto.toolkit.thirdparty.git.GitContext;
 import com.github.lernejo.korekto.toolkit.thirdparty.git.GitNature;
-import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-class Grader implements GradingStep {
+public class GitGrader implements Grader {
 
     private final Equalator equalator = new Equalator(1);
 
@@ -34,5 +34,20 @@ class Grader implements GradingStep {
             new Part3Grader(equalator).grade(git, exercise, context),
             new Part4Grader(equalator).grade(git, exercise, context)
         );
+    }
+
+    @Override
+    public Instant deadline(GradingContext context) {
+        return null;
+    }
+
+    @Override
+    public boolean needsWorkspaceReset() {
+        return true;
+    }
+
+    @Override
+    public String slugToRepoUrl(String slug) {
+        return "https://github.com/" + slug + "/git_training";
     }
 }
