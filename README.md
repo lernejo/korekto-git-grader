@@ -11,7 +11,7 @@ argument `-s=mySlug`
 ### With Maven
 
 ```bash
-mvn compile exec:java -Dexec.mainClass="com.github.lernejo.korekto.toolkit.launcher.GradingJobLauncher" -Dexec.args="-s=mySlug"
+mvn compile exec:java -Dexec.args="-s=mySlug"
 ```
 
 ### With intelliJ
