@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class GitGrader implements Grader {
 
-    private final Equalator equalator = new Equalator(1);
+    private final Equalator equalator = new Equalator(Integer.parseInt(System.getProperty("equalator.threshold", "3")));
 
     @Override
     public void run(GradingConfiguration configuration, GradingContext context) {
