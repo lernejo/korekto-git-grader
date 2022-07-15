@@ -21,7 +21,7 @@
         <gson.version>2.9.0</gson.version>
         <logback-classic.version>1.2.11</logback-classic.version>
 
-        <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
     </properties>
 
     <scm>
