@@ -15,7 +15,7 @@ public class GitGrader implements Grader {
     private final Equalator equalator = new Equalator(Integer.parseInt(System.getProperty("equalator.threshold", "3")));
 
     @Override
-    public void run(GradingConfiguration configuration, GradingContext context) {
+    public void run(GradingContext context) {
         Optional<GitNature> optionalGitNature = context.getExercise().lookupNature(GitNature.class);
         if (optionalGitNature.isEmpty()) {
             context.getGradeDetails().getParts().add(new GradePart(Part1Grader.NAME, 0D, 4D, List.of("Not a Git project")));
