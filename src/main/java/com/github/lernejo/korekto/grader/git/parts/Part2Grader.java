@@ -1,59 +1,48 @@
 package com.github.lernejo.korekto.grader.git.parts;
 
-import com.github.lernejo.korekto.toolkit.Exercise;
+import com.github.lernejo.korekto.grader.git.GitGrader;
+import com.github.lernejo.korekto.grader.git.LaunchingContext;
 import com.github.lernejo.korekto.toolkit.GradePart;
-import com.github.lernejo.korekto.toolkit.misc.Equalator;
+import com.github.lernejo.korekto.toolkit.PartGrader;
 import com.github.lernejo.korekto.toolkit.thirdparty.git.GitContext;
+import com.github.lernejo.korekto.toolkit.thirdparty.git.GitNature;
 import com.github.lernejo.korekto.toolkit.thirdparty.markdown.Link;
 import com.github.lernejo.korekto.toolkit.thirdparty.markdown.MarkdownFile;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Part2Grader extends AbstractPartGrader {
+public record Part2Grader(String name, Double maxGrade) implements PartGrader<LaunchingContext> {
 
     static final String BRANCH = "ex/part_2";
-    static final String NAME = "Part 2";
 
-    public Part2Grader(Equalator equalator) {
-        super(equalator);
-    }
-
+    @NotNull
     @Override
-    public String name() {
-        return NAME;
-    }
-
-    @Override
-    public GradePart grade(GitContext git, Exercise exercise, GitTrainingGraderContext context) {
-        List<String> explanations = new ArrayList<>();
-        double grade = 0;
+    public GradePart grade(@NotNull LaunchingContext context) {
+        GitContext git = context.getExercise().lookupNature(GitNature.class).get().getContext();
 
         if (!git.getBranchNames().contains(BRANCH)) {
-            explanations.add("Missing branch `" + BRANCH + "`");
-            return result(explanations, grade);
+            return result(List.of("Missing branch `" + BRANCH + "`"), 0);
         }
 
         git.checkout(BRANCH);
         List<RevCommit> commits = git.listOrderedCommits();
         context.part2Commits = commits;
         if (commits.size() < 4) {
-            explanations.add("The branch `" + BRANCH + "` should have at least 4 commits, found " + commits.size());
-            return result(explanations, grade);
+            return result(List.of("The branch `" + BRANCH + "` should have at least 4 commits, found " + commits.size()), 0);
         }
         if (context.part1Commits == null || context.part1Commits.size() < 3 || !context.part1Commits.subList(0, 3).equals(commits.subList(0, 3))) {
-            explanations.add("The first three commits of branch `" + BRANCH + "` should be the same as branch `" + Part1Grader.BRANCH + "`");
-            return result(explanations, grade);
+            return result(List.of("The first three commits of branch `" + BRANCH + "` should be the same as branch `" + Part1Grader.BRANCH + "`"), 0);
         }
 
-        if (!checkCommitMessage(commits, 3, "Add Markdown documentation", explanations)) {
-            return result(explanations, grade);
+        List<String> errors = context.checkCommitMessage(commits, 3, "Add Markdown documentation");
+        if (!errors.isEmpty()) {
+            return result(errors, 0);
         }
-        MarkdownFile docMd = new MarkdownFile(exercise.getRoot().resolve("Doc.md"));
+        MarkdownFile docMd = new MarkdownFile(context.getExercise().getRoot().resolve("Doc.md"));
         if (!docMd.exists()) {
-            explanations.add("Missing file **Doc.md**");
-            return result(explanations, grade);
+            return result(List.of("Missing file **Doc.md**"), 0);
         }
         List<Link> links = docMd.getLinks();
         List<Link> expectedLinks = List.of(
@@ -61,32 +50,28 @@ public class Part2Grader extends AbstractPartGrader {
             new Link("Markdown - Documentation", "https://guides.github.com/features/mastering-markdown"),
             new Link("Markdown bestpractices", "https://www.markdownguide.org/basic-syntax/")
         );
-        if (!equalator.equals(expectedLinks, links)) {
-            explanations.add("In **Doc.md**, links should be \n\t" + expectedLinks + "\n, but found \n\t" + links);
-            return result(explanations, grade);
+        if (!context.equalator.equals(expectedLinks, links)) {
+            return result(List.of("In **Doc.md**, links should be \n\t" + expectedLinks + "\n, but found \n\t" + links), 0);
         }
 
         if (commits.size() != 5) {
-            explanations.add("The branch `" + BRANCH + "` should have 5 commits, found " + commits.size());
-            return result(explanations, grade);
+            return result(List.of("The branch `" + BRANCH + "` should have 5 commits, found " + commits.size()), 0);
         }
-        if (!checkCommitMessage(commits, 4, "Ex Part 2", explanations)) {
-            return result(explanations, grade);
+        errors = context.checkCommitMessage(commits, 4, "Ex Part 2");
+        if (!errors.isEmpty()) {
+            return result(errors, 0);
         }
 
-        MarkdownFile exMd = new MarkdownFile(exercise.getRoot().resolve("Ex.md"));
+        MarkdownFile exMd = new MarkdownFile(context.getExercise().getRoot().resolve("Ex.md"));
         if (!exMd.exists()) {
-            explanations.add("Missing file **Ex.md**");
-            return result(explanations, grade);
+            return result(List.of("Missing file **Ex.md**"), 0);
         }
         List<String> bulletPoints = exMd.getBulletPoints();
-        List<String> expectedBulletPoints = List.of(Part1Grader.NAME, NAME);
+        List<String> expectedBulletPoints = List.of(GitGrader.PART_1_NAME, name);
         if (!expectedBulletPoints.equals(bulletPoints)) {
-            explanations.add("In **Ex.md**, expecting bullet points " + expectedBulletPoints + ", found " + bulletPoints);
-            return result(explanations, grade);
+            return result(List.of("In **Ex.md**, expecting bullet points " + expectedBulletPoints + ", found " + bulletPoints), 0);
         }
 
-        grade = 1;
-        return result(explanations, grade);
+        return result(List.of(), maxGrade);
     }
 }
