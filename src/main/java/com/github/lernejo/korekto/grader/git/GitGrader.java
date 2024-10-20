@@ -1,44 +1,44 @@
 package com.github.lernejo.korekto.grader.git;
 
-import com.github.lernejo.korekto.grader.git.parts.*;
-import com.github.lernejo.korekto.toolkit.*;
-import com.github.lernejo.korekto.toolkit.misc.Equalator;
-import com.github.lernejo.korekto.toolkit.thirdparty.git.GitContext;
-import com.github.lernejo.korekto.toolkit.thirdparty.git.GitNature;
+import com.github.lernejo.korekto.grader.git.parts.Part1Grader;
+import com.github.lernejo.korekto.grader.git.parts.Part2Grader;
+import com.github.lernejo.korekto.grader.git.parts.Part3Grader;
+import com.github.lernejo.korekto.grader.git.parts.Part4Grader;
+import com.github.lernejo.korekto.toolkit.Grader;
+import com.github.lernejo.korekto.toolkit.GradingConfiguration;
+import com.github.lernejo.korekto.toolkit.PartGrader;
+import org.jetbrains.annotations.NotNull;
 
-import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
-public class GitGrader implements Grader {
+public class GitGrader implements Grader<LaunchingContext> {
 
-    private final Equalator equalator = new Equalator(Integer.parseInt(System.getProperty("equalator.threshold", "3")));
+    public static String PART_1_NAME = "Part 1";
+    public static String PART_2_NAME = "Part 2";
+    public static String PART_3_NAME = "Part 3";
 
+    @NotNull
     @Override
-    public void run(GradingContext context) {
-        Optional<GitNature> optionalGitNature = context.getExercise().lookupNature(GitNature.class);
-        if (optionalGitNature.isEmpty()) {
-            context.getGradeDetails().getParts().add(new GradePart(Part1Grader.NAME, 0D, 4D, List.of("Not a Git project")));
-        } else {
-            GitNature gitNature = optionalGitNature.get();
-            context.getGradeDetails().getParts().addAll(gitNature.withContext(c -> grade(c, context.getExercise())));
-        }
+    public String name() {
+        return "Git training";
     }
 
-    private List<GradePart> grade(GitContext git, Exercise exercise) {
-        GitTrainingGraderContext context = new GitTrainingGraderContext();
+    @NotNull
+    @Override
+    public LaunchingContext gradingContext(@NotNull GradingConfiguration configuration) {
+        return new LaunchingContext(configuration);
+    }
 
+    @NotNull
+    @Override
+    public Collection<PartGrader<LaunchingContext>> graders() {
         return List.of(
-            new Part1Grader(equalator).grade(git, exercise, context),
-            new Part2Grader(equalator).grade(git, exercise, context),
-            new Part3Grader(equalator).grade(git, exercise, context),
-            new Part4Grader(equalator).grade(git, exercise, context)
+            new Part1Grader(PART_1_NAME, 1.0D),
+            new Part2Grader(PART_2_NAME, 2.0D),
+            new Part3Grader(PART_3_NAME, 4.0D),
+            new Part4Grader("Part 4", 8.0D)
         );
-    }
-
-    @Override
-    public Instant deadline(GradingContext context) {
-        return null;
     }
 
     @Override
@@ -46,8 +46,9 @@ public class GitGrader implements Grader {
         return true;
     }
 
+    @NotNull
     @Override
-    public String slugToRepoUrl(String slug) {
+    public String slugToRepoUrl(@NotNull String slug) {
         return "https://github.com/" + slug + "/git_training";
     }
 }

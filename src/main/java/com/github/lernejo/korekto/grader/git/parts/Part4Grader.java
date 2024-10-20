@@ -1,89 +1,74 @@
 package com.github.lernejo.korekto.grader.git.parts;
 
-import com.github.lernejo.korekto.toolkit.Exercise;
+import com.github.lernejo.korekto.grader.git.GitGrader;
+import com.github.lernejo.korekto.grader.git.LaunchingContext;
 import com.github.lernejo.korekto.toolkit.GradePart;
-import com.github.lernejo.korekto.toolkit.misc.Equalator;
+import com.github.lernejo.korekto.toolkit.PartGrader;
 import com.github.lernejo.korekto.toolkit.thirdparty.git.GitContext;
+import com.github.lernejo.korekto.toolkit.thirdparty.git.GitNature;
 import com.github.lernejo.korekto.toolkit.thirdparty.markdown.MarkdownFile;
 import com.github.lernejo.korekto.toolkit.thirdparty.markdown.Title;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Part4Grader extends AbstractPartGrader {
+public record Part4Grader(String name, Double maxGrade) implements PartGrader<LaunchingContext> {
 
     static final String BRANCH = "ex/part_4";
-    static final String NAME = "Part 4";
 
-    public Part4Grader(Equalator equalator) {
-        super(equalator);
-    }
-
+    @NotNull
     @Override
-    public String name() {
-        return NAME;
-    }
-
-    public GradePart grade(GitContext git, Exercise exercise, GitTrainingGraderContext context) {
-        List<String> explanations = new ArrayList<>();
-        double grade = 0;
+    public GradePart grade(@NotNull LaunchingContext context) {
+        GitContext git = context.getExercise().lookupNature(GitNature.class).get().getContext();
 
         if (!git.getBranchNames().contains(BRANCH)) {
-            explanations.add("Missing branch `" + BRANCH + "`");
-            return result(explanations, grade);
+            return result(List.of("Missing branch `" + BRANCH + "`"), 0);
         }
 
         git.checkout(BRANCH);
         List<RevCommit> commits = git.listOrderedCommits();
         if (commits.size() < 3) {
-            explanations.add("The branch `" + BRANCH + "` should have at least 3 commits, found " + commits.size());
-            return result(explanations, grade);
+            return result(List.of("The branch `" + BRANCH + "` should have at least 3 commits, found " + commits.size()), 0);
         }
         if (context.part3Commits == null || !context.part3Commits.subList(0, 2).equals(commits.subList(0, 2))) {
-            explanations.add("The first two commits of branch `" + BRANCH + "` should be the same as in branch `" + Part3Grader.BRANCH + "`");
-            return result(explanations, grade);
+            return result(List.of("The first two commits of branch `" + BRANCH + "` should be the same as in branch `" + Part3Grader.BRANCH + "`"), 0);
         }
 
-        if (!checkCommitMessage(commits, 2, "Back to the future", explanations)) {
-            return result(explanations, grade);
+        List<String> errors = context.checkCommitMessage(commits, 2, "Back to the future");
+        if (!errors.isEmpty()) {
+            return result(errors, 0);
         }
-        MarkdownFile endMd = new MarkdownFile(exercise.getRoot().resolve("End.md"));
+        MarkdownFile endMd = new MarkdownFile(context.getExercise().getRoot().resolve("End.md"));
         if (!endMd.exists()) {
-            explanations.add("Missing file **End.md**");
-            return result(explanations, grade);
+            return result(List.of("Missing file **End.md**"), 0);
         }
         List<Title> titles = endMd.getTitlesOfLevel(1);
         List<Title> expectedTitles = List.of(new Title(1, "The end"));
-        if (!equalator.equals(expectedTitles, titles)) {
-            explanations.add("In **End.md**, title should be " + expectedTitles + ", found " + titles);
-            return result(explanations, grade);
+        if (!context.equalator.equals(expectedTitles, titles)) {
+            return result(List.of("In **End.md**, title should be " + expectedTitles + ", found " + titles), 0);
         }
-        if (!equalator.equals(endMd.getLineCount(), 2)) {
-            explanations.add("**End.md** file should be 2 lines long, found " + endMd.getLineCount());
-            return result(explanations, grade);
+        if (!context.equalator.equals(endMd.getLineCount(), 2)) {
+            return result(List.of("**End.md** file should be 2 lines long, found " + endMd.getLineCount()), 0);
         }
 
         if (commits.size() < 4) {
-            explanations.add("The branch `" + BRANCH + "` should have 4 commits, found " + commits.size());
-            return result(explanations, grade);
+            return result(List.of("The branch `" + BRANCH + "` should have 4 commits, found " + commits.size()), 0);
         }
-        if (!checkCommitMessage(commits, 3, "Exercise", explanations)) {
-            return result(explanations, grade);
+        errors = context.checkCommitMessage(commits, 3, "Exercise");
+        if (!errors.isEmpty()) {
+            return result(errors, 0);
         }
-        MarkdownFile exMd = new MarkdownFile(exercise.getRoot().resolve("Ex.md"));
+        MarkdownFile exMd = new MarkdownFile(context.getExercise().getRoot().resolve("Ex.md"));
         if (!exMd.exists()) {
-            explanations.add("Missing file **Ex.md**");
-            return result(explanations, grade);
+            return result(List.of("Missing file **Ex.md**"), 0);
         }
         List<String> bulletPoints = exMd.getBulletPoints();
-        List<String> expectedBulletPoints = List.of(Part1Grader.NAME, Part2Grader.NAME, Part3Grader.NAME);
+        List<String> expectedBulletPoints = List.of(GitGrader.PART_1_NAME, GitGrader.PART_2_NAME, GitGrader.PART_3_NAME);
         if (!expectedBulletPoints.equals(bulletPoints)) {
-            explanations.add("In **Ex.md**, expecting bullet points " + expectedBulletPoints + ", found " + bulletPoints);
-            return result(explanations, grade);
+            return result(List.of("In **Ex.md**, expecting bullet points " + expectedBulletPoints + ", found " + bulletPoints), 0);
         }
 
-        grade = 1;
-        return result(explanations, grade);
+        return result(List.of(), maxGrade);
     }
 }
