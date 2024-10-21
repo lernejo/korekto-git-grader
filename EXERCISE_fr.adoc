@@ -1,6 +1,11 @@
 = Exercice sur Git
+:tip-caption: 💡
+:note-caption: ℹ️
+:warning-caption: ⚠️
+:icons: font
+:hardbreaks-option:
 
-La correction sera automatique, prêtez donc une attention spéciale aux messages de commit, aux noms des branches, etc.
+La correction est automatique, prêtez donc une attention spéciale aux messages de commit, aux noms des branches, etc.
 
 Tous les fichiers que vous indexerez doivent avoir une ligne vide à la fin (en plus du contenu donc).
 
