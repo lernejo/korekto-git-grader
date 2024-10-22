@@ -24,7 +24,7 @@ Les parties se suivent et sont à faire dans l'ordre.
 == Prérequis
 
 * Git
-** Configurer Git avec votre nom et email :
+** Si ce n'est pas déjà fait, configurer Git avec votre nom et email, exemple :
 *** `git config --global user.name "John Doe"`
 *** `git config --global user.email johndoe@example.fr`
 ** De préférence, générer une clé SSH (si absente) et donner la partie publique à GitHub (cf https://help.github.com/articles/connecting-to-github-with-ssh/), afin de pouvoir cloner le dépôt avec l'*url SSH*
@@ -36,6 +36,7 @@ Rappels des commandes de base : link:CHEATSHEET_fr.adoc[]
 == Partie 1
 
 * Créer un nouveau dépôt Git privé (bouton radio *private* dans le formulaire) sur la plateforme GitHub avec le nom *git_training* initialisé avec un fichier `README.md` (case à cocher dans le formulaire)
+* Une fois le dépôt créé, installer l'app https://github.com/apps/korekto[Korekto], ou mettre à jour sa configuration afin qu'elle ait accès à ce nouveau dépôt
 * Cloner ce nouveau dépôt en utilisant l'*url SSH*
 * Créer une nouvelle branche nommée *ex/part_1*
 * Ajouter un fichier nommé `Doc.md` et contenant un titre *Documentation* et un lien hypertexte nommé *Git - Documentation* pointant sur https://git-scm.com/doc
