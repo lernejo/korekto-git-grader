@@ -54,7 +54,7 @@ Rappels des commandes de base : link:CHEATSHEET_fr.adoc[]
 * Créer une nouvelle branche nommée *ex/part_2* à partir de la branche précédente
 * Pousser cette branche
 * Modifier le dernier message de commit pour donner *Add Markdown documentation*
-* Modifier le dernier commit en ajoutant à la fin du fichier `Doc.md` un nouveau lien hypertexte appelé *Markdown bestpractices* et pointant sur https://www.markdownguide.org/basic-syntax
+* Modifier le dernier commit en ajoutant à la fin du fichier `Doc.md` un nouveau lien hypertexte appelé *Markdown bestpractices* et pointant sur https://www.markdownguide.org/basic-syntax/
 * ✔️ à ce stade, cette branche a 4 commits en tout et elle a divergé par rapport à la version du remote
 * Pousser la branche
 * Ajouter dans le fichier `Ex.md` un nouveau bullet point avec le texte *Part 2*
